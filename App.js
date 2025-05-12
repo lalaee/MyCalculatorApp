@@ -16,21 +16,21 @@ const AnimatedButton = ({ label, type, onPress, style: customStyle, textStyle: c
 
     const handlePressIn = () => {
         Animated.spring(scaleValue, {
-            toValue: 0.95, // Scale down slightly
-            useNativeDriver: true, // Use native driver for performance (scale is supported)
-            // Optional: adjust spring parameters for feel
-            // friction: 7,
-            // tension: 40,
+            // --- CHANGE HERE: Make shrink more visible ---
+            toValue: 0.5, // Scale down further to 0.9
+            // --- End Change ---
+            useNativeDriver: true,
         }).start();
     };
 
     const handlePressOut = () => {
         Animated.spring(scaleValue, {
             toValue: 1, // Scale back to normal
+            // --- CHANGES HERE: Add bounce on release ---
+            friction: 3, // Lower friction for more bounce (try 2 or 3)
+            tension: 70, // Adjust tension slightly if needed
+            // --- End Changes ---
             useNativeDriver: true,
-             // Optional: adjust spring parameters for feel
-            friction: 4, // Lower friction for a bit quicker snap back
-            tension: 60,
         }).start();
 
         // Trigger the original onPress function passed in props on release
@@ -45,15 +45,12 @@ const AnimatedButton = ({ label, type, onPress, style: customStyle, textStyle: c
     };
 
     return (
-        // Use Animated.View wrapper around TouchableOpacity or make TouchableOpacity animated
-        // Let's use Animated.View wrapper as it's often more flexible
          <Animated.View style={animatedStyle}>
             <TouchableOpacity
                 style={[styles.button, customStyle]} // Combine base and custom styles for layout
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 activeOpacity={0.9} // Adjust or remove if scale provides enough feedback
-                // onPress is handled by onPressOut now
             >
                 <Text style={[styles.buttonText, customTextStyle]}>
                     {label}
@@ -64,8 +61,9 @@ const AnimatedButton = ({ label, type, onPress, style: customStyle, textStyle: c
 };
 
 
-// --- Main App Component (mostly unchanged logic) ---
+// --- Main App Component (Unchanged) ---
 const App = () => {
+  // ... (All the state, handlers, and logic from the previous version remain exactly the same) ...
   const [currentValue, setCurrentValue] = useState("0");
   const [previousValue, setPreviousValue] = useState(null);
   const [operator, setOperator] = useState(null);
@@ -206,7 +204,7 @@ const App = () => {
   const screenWidth = Dimensions.get('window').width;
   const buttonUnitSize = screenWidth / 4 - 12;
 
-  // --- Render Section ---
+  // --- Render Section (Unchanged) ---
   return (
     <SafeAreaView style={styles.container}>
       {/* Display Area (Unchanged) */}
@@ -259,7 +257,7 @@ const App = () => {
   );
 };
 
-// --- Styles (Mostly Unchanged) ---
+// --- Styles (Unchanged) ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -291,22 +289,18 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Ensure spacing is handled correctly by the row
+    justifyContent: 'space-between',
     marginBottom: 15,
-    alignItems: 'center', // Center buttons vertically if heights differ slightly
+    alignItems: 'center',
   },
-  // Style applied to the TouchableOpacity INSIDE AnimatedButton
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 5, // Keep margin for spacing between touch areas
-     // width and height are now passed dynamically via props to AnimatedButton's style prop
+    margin: 5,
   },
-  // Style applied to the Text INSIDE AnimatedButton
   buttonText: {
     fontSize: 36,
     fontWeight: '400',
-    // color is now passed dynamically via props to AnimatedButton's textStyle prop
   },
 });
 
