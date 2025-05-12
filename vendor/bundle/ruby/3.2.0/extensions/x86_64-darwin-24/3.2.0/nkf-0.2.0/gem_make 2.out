@@ -1,0 +1,19 @@
+current directory: /Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/vendor/bundle/ruby/3.2.0/gems/nkf-0.2.0/ext/nkf
+/Users/olalekanisaac/.rbenv/versions/3.2.2/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/vendor/bundle/ruby/3.2.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250512-33374-uscqav sitelibdir\=./.gem.20250512-33374-uscqav clean
+
+current directory: /Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/vendor/bundle/ruby/3.2.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250512-33374-uscqav sitelibdir\=./.gem.20250512-33374-uscqav
+compiling nkf.c
+linking shared-object nkf.bundle
+ld: warning: ignoring duplicate libraries: '-lruby.3.2'
+
+current directory: /Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/vendor/bundle/ruby/3.2.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250512-33374-uscqav sitelibdir\=./.gem.20250512-33374-uscqav install
+/usr/bin/install -c -m 0755 nkf.bundle ./.gem.20250512-33374-uscqav
+
+current directory: /Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/vendor/bundle/ruby/3.2.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250512-33374-uscqav sitelibdir\=./.gem.20250512-33374-uscqav clean

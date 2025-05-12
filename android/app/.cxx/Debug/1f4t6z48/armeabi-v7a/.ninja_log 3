@@ -1,0 +1,5 @@
+# ninja log v5
+0	33	0	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/.cxx/Debug/1f4t6z48/armeabi-v7a/CMakeFiles/cmake.verify_globs	d32350f6c5c178a4
+1	3354	1747051824638252055	CMakeFiles/appmodules.dir/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	47822f171ed90047
+1	3701	1747051824983427769	CMakeFiles/appmodules.dir/OnLoad.cpp.o	2e2bab419711f1cf
+3701	3850	1747051825144607456	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/intermediates/cxx/Debug/1f4t6z48/obj/armeabi-v7a/libappmodules.so	883ece21f617a1fb

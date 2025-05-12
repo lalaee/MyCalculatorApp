@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+ios/Pods/
+*.log
+android/.gradle/
+android/app/build/
+*.keystore
+.env

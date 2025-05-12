@@ -1,5 +1,5 @@
 # ninja log v5
-1	30	0	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/.cxx/Debug/1f4t6z48/x86_64/CMakeFiles/cmake.verify_globs	1a5339a9121714bf
-0	3207	1747051836118490812	CMakeFiles/appmodules.dir/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	f4c341a3a739edf6
-0	3478	1747051836387273955	CMakeFiles/appmodules.dir/OnLoad.cpp.o	f6c813d0daa756a2
-3479	3658	1747051836580513665	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/intermediates/cxx/Debug/1f4t6z48/obj/x86_64/libappmodules.so	fd7865c920da01fc
+1	31	0	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/.cxx/Debug/1f4t6z48/x86_64/CMakeFiles/cmake.verify_globs	1a5339a9121714bf
+0	3256	1747085059493424694	CMakeFiles/appmodules.dir/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o	f4c341a3a739edf6
+0	3532	1747085059772847705	CMakeFiles/appmodules.dir/OnLoad.cpp.o	f6c813d0daa756a2
+3532	3652	1747085059906918106	/Users/olalekanisaac/Documents/vibeCode/calculatorUI/MyCalculatorApp/android/app/build/intermediates/cxx/Debug/1f4t6z48/obj/x86_64/libappmodules.so	fd7865c920da01fc
