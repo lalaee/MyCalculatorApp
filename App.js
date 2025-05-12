@@ -17,7 +17,7 @@ const AnimatedButton = ({ label, type, onPress, style: customStyle, textStyle: c
     const handlePressIn = () => {
         Animated.spring(scaleValue, {
             // --- CHANGE HERE: Make shrink more visible ---
-            toValue: 0.5, // Scale down further to 0.9
+            toValue: 0.5, // Scale down further to 0.5
             // --- End Change ---
             useNativeDriver: true,
         }).start();
