@@ -5,7 +5,7 @@ const App = () => {
   const [currentValue, setCurrentValue] = useState("0");
   const [previousValue, setPreviousValue] = useState(null);
   const [operator, setOperator] = useState(null);
-  const [isNewCalculation, setIsNewCalculation] = useState(true); // To handle if the next number should overwrite
+  const [isNewCalculation, setIsNewCalculation] = useState(true);
 
   const handleNumberInput = (value) => {
     if (currentValue === "Error") {
@@ -14,11 +14,13 @@ const App = () => {
       return;
     }
     if (isNewCalculation || currentValue === "0") {
-      if (value === "." && currentValue.includes(".")) return; // Prevent multiple decimals if starting new
+      if (value === "." && currentValue.includes(".")) return;
       setCurrentValue(value === "." ? "0." : value);
       setIsNewCalculation(false);
     } else {
-      if (value === "." && currentValue.includes(".")) return; // Prevent multiple decimals
+      // Limit length slightly for display
+      if (currentValue.length >= 15) return;
+      if (value === "." && currentValue.includes(".")) return;
       setCurrentValue(currentValue + value);
     }
   };
@@ -27,7 +29,7 @@ const App = () => {
     const prev = parseFloat(previousValue);
     const current = parseFloat(currentValue);
 
-    if (isNaN(prev) || isNaN(current)) return "Error"; // Should not happen with proper input handling
+    if (isNaN(prev) || isNaN(current)) return "Error";
 
     let result;
     switch (operator) {
@@ -37,7 +39,7 @@ const App = () => {
       case '-':
         result = prev - current;
         break;
-      case '*':
+      case '*': // Internal logic still uses '*'
         result = prev * current;
         break;
       case '/':
@@ -47,17 +49,28 @@ const App = () => {
         result = prev / current;
         break;
       default:
-        return current.toString(); // Should not happen
+        return current.toString();
     }
-    // Handle potential floating point inaccuracies for simple cases
-    if (result.toString().includes(".") && result.toString().split('.')[1].length > 8) {
-        return parseFloat(result.toFixed(8)).toString();
+    // Handle potential floating point inaccuracies & limit display length
+    let resultString = result.toString();
+     if (resultString.includes(".") && resultString.split('.')[1].length > 8) {
+        resultString = parseFloat(result.toFixed(8)).toString();
     }
-    return result.toString();
+    if (resultString.length > 15) { // Limit overall result length for display
+        resultString = parseFloat(resultString).toExponential(8);
+    }
+
+    return resultString;
   };
 
   const handleOperatorInput = (op) => {
     if (currentValue === "Error") return;
+
+    // Allow changing operator if no new number entered yet
+    if (isNewCalculation && previousValue !== null) {
+        setOperator(op);
+        return;
+    }
 
     if (previousValue !== null && operator && !isNewCalculation) {
       const result = performCalculation();
@@ -69,25 +82,23 @@ const App = () => {
         return;
       }
       setPreviousValue(result);
-    } else if (previousValue === null || isNewCalculation) { // if it's the first operator or after equals
+    } else if (previousValue === null || isNewCalculation) {
         setPreviousValue(currentValue);
     }
     setOperator(op);
-    setIsNewCalculation(true); // Next number input will start a new number
+    setIsNewCalculation(true);
   };
 
 
   const handleEquals = () => {
     if (previousValue === null || operator === null || currentValue === "Error" || isNewCalculation) {
-      // if isNewCalculation is true, it means an operator was just pressed, so the current display is not the second operand yet.
-      // Or, if there's no previous value or operator.
       return;
     }
     const result = performCalculation();
     setCurrentValue(result);
     setPreviousValue(null);
     setOperator(null);
-    setIsNewCalculation(true); // Ready for a new calculation
+    setIsNewCalculation(true);
   };
 
   const handleClear = () => {
@@ -97,29 +108,39 @@ const App = () => {
     setIsNewCalculation(true);
   };
 
-  // For buttons like +/- or % (not implemented in core logic but placeholder for layout)
   const handleSpecialOperator = (op) => {
+     if (currentValue === "Error") return;
     if (op === '+/-') {
-        if (currentValue === "Error" || currentValue === "0") return;
+        if (currentValue === "0") return;
         setCurrentValue((parseFloat(currentValue) * -1).toString());
-        setIsNewCalculation(false); // Allow further editing of this number
+        // Keep isNewCalculation as it was - allows toggling sign repeatedly
     } else if (op === '%') {
-        if (currentValue === "Error" || currentValue === "0") return;
-        setCurrentValue((parseFloat(currentValue) / 100).toString());
-        setIsNewCalculation(false); // Allow further editing of this number
+        if (currentValue === "0") return;
+        // Perform % calculation relative to previous value if in sequence, else treat as /100
+         if (operator && previousValue) {
+             const current = parseFloat(currentValue);
+             const prev = parseFloat(previousValue);
+             if (!isNaN(prev) && !isNaN(current)) {
+                setCurrentValue(((prev * current) / 100).toString());
+             }
+         } else {
+             setCurrentValue((parseFloat(currentValue) / 100).toString());
+         }
+        // Don't set isNewCalculation=true, allow further typing or hitting equals
+        setIsNewCalculation(false); // Allow further editing/equals
     }
   };
 
-
+  // --- Button Definition ---
   const buttons = [
-    [{ label: 'C', type: 'clear', onPress: handleClear },
+    [{ label: 'C', type: 'special', onPress: handleClear }, // Changed 'clear' to 'special' for coloring
      { label: '+/-', type: 'special', onPress: () => handleSpecialOperator('+/-') },
      { label: '%', type: 'special', onPress: () => handleSpecialOperator('%') },
      { label: '/', type: 'operator', onPress: () => handleOperatorInput('/') }],
     [{ label: '7', type: 'number', onPress: () => handleNumberInput('7') },
      { label: '8', type: 'number', onPress: () => handleNumberInput('8') },
      { label: '9', type: 'number', onPress: () => handleNumberInput('9') },
-     { label: '*', type: 'operator', onPress: () => handleOperatorInput('*') }],
+     { label: '×', type: 'operator', onPress: () => handleOperatorInput('*') }], // Label changed, logic uses '*'
     [{ label: '4', type: 'number', onPress: () => handleNumberInput('4') },
      { label: '5', type: 'number', onPress: () => handleNumberInput('5') },
      { label: '6', type: 'number', onPress: () => handleNumberInput('6') },
@@ -130,60 +151,66 @@ const App = () => {
      { label: '+', type: 'operator', onPress: () => handleOperatorInput('+') }],
     [{ label: '0', type: 'number', onPress: () => handleNumberInput('0'), style: { flex: 2 } }, // Wider button
      { label: '.', type: 'number', onPress: () => handleNumberInput('.') },
-     { label: '=', type: 'equals', onPress: handleEquals }]
+     { label: '=', type: 'equals', onPress: handleEquals }] // 'equals' type for coloring
   ];
 
-  const getButtonBackgroundColor = (type) => {
-    if (type === 'number') return '#333333';
-    if (type === 'operator' || type === 'equals') return '#FFA500';
-    if (type === 'clear' || type === 'special') return '#A9A9A9';
-    return '#333333'; // Default
-  };
-
+  // --- Text Color Logic ---
   const getButtonTextColor = (type) => {
-    if (type === 'clear' || type === 'special') return '#000000';
-    return '#FFFFFF';
+    if (type === 'number') return '#D3D3D3'; // Light Gray
+    if (type === 'special') return '#808080'; // Medium Gray (for C, +/-, %)
+    if (type === 'operator' || type === 'equals') return '#FFA500'; // Orange
+    return '#FFFFFF'; // Default fallback (shouldn't be needed)
   };
 
-  // Adjust button size based on screen width
+  // --- Dynamic Sizing ---
   const screenWidth = Dimensions.get('window').width;
-  const buttonSize = screenWidth / 4 - 12; // 4 buttons per row, with some margin
+  // Calculate base size for one button width unit
+  const buttonUnitSize = screenWidth / 4 - 12; // Roughly 4 buttons per row with margin factored in
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.displayContainer}>
-        {previousValue !== null && operator && (
+        {previousValue !== null && operator && !isNewCalculation && ( // Only show previous value when entering second operand
           <Text style={styles.previousInputText}>
-            {`${previousValue} ${operator}`}
+            {`${previousValue} ${operator === '*' ? '×' : operator}`}
           </Text>
         )}
-        <Text style={styles.displayText} numberOfLines={1} ellipsizeMode="head">
+        <Text style={styles.displayText} numberOfLines={1} adjustsFontSizeToFit>
           {currentValue}
         </Text>
       </View>
       <View style={styles.buttonContainer}>
         {buttons.map((row, rowIndex) => (
           <View key={rowIndex} style={styles.buttonRow}>
-            {row.map((button) => (
-              <TouchableOpacity
-                key={button.label}
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: getButtonBackgroundColor(button.type),
-                    width: button.style?.flex ? (buttonSize * button.style.flex + (button.style.flex -1) * 10) : buttonSize, // Adjust width for wider button
-                    height: buttonSize,
-                    borderRadius: buttonSize / 2, // Circular buttons
-                  },
-                  button.style // Apply additional styles like flex for '0'
-                ]}
-                onPress={button.onPress}
-              >
-                <Text style={[styles.buttonText, { color: getButtonTextColor(button.type) }]}>
-                  {button.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {row.map((button) => {
+                // Calculate the width for this specific button
+                const buttonWidth = button.style?.flex
+                    ? (buttonUnitSize * button.style.flex + (button.style.flex -1) * 10) // Span multiple units + margins
+                    : buttonUnitSize; // Standard single unit width
+
+                return (
+                  <TouchableOpacity
+                    key={button.label}
+                    style={[
+                      styles.button, // Base button style (alignment, margins, touch area size)
+                      {
+                        width: buttonWidth, // Apply calculated width
+                        height: buttonUnitSize, // Keep height consistent (square aspect ratio for touch area)
+                        // NO backgroundColor or borderRadius here
+                      },
+                      // button.style // Apply specific styles like flex if needed (mainly for width calculation now)
+                    ]}
+                    onPress={button.onPress}
+                  >
+                    <Text style={[
+                      styles.buttonText, // Base text style (font size, weight)
+                      { color: getButtonTextColor(button.type) } // Apply dynamic text color
+                    ]}>
+                      {button.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+            })}
           </View>
         ))}
       </View>
@@ -194,45 +221,49 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1C1C1C', // Near-black background
-    justifyContent: 'flex-end', // Align calculator to bottom
+    backgroundColor: '#1C1C1C', // Near-black background remains
+    justifyContent: 'flex-end',
   },
   displayContainer: {
-    paddingHorizontal: 25,
-    paddingVertical: 40,
+    paddingHorizontal: 30, // Increased padding slightly
+    paddingBottom: 20,     // Reduced bottom padding
+    paddingTop: 60,        // Increased top padding for more space
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
-    minHeight: 120, // Ensure enough space for previous input and current value
+    minHeight: 150,         // Adjusted min height
   },
   previousInputText: {
     fontSize: 24,
-    color: '#A0A0A0', // Lighter gray for previous input
+    color: '#A0A0A0',
     marginBottom: 5,
   },
   displayText: {
-    fontSize: 70,
+    fontSize: 80, // Slightly larger display text
     color: '#FFFFFF',
     fontWeight: '300',
+    textAlign: 'right', // Ensure right alignment
   },
   buttonContainer: {
-    paddingBottom: 20,
+    paddingBottom: 30, // More padding at the very bottom
     paddingHorizontal: 10,
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Distribute buttons evenly
-    marginBottom: 10,
+    justifyContent: 'space-between',
+    marginBottom: 15, // Increased spacing between rows
   },
   button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 5, // Spacing between buttons
-    // width and height are set dynamically
-    // borderRadius is set dynamically for circular shape
+    // Responsible for alignment and touch area size/spacing
+    alignItems: 'center',       // Center text horizontally
+    justifyContent: 'center',   // Center text vertically
+    margin: 5,                 // Spacing remains
+    // width and height are set dynamically inline
+    // NO backgroundColor, NO borderRadius
   },
   buttonText: {
-    fontSize: 30, // Clear, sans-serif font (React Native default is San Francisco/Roboto)
-    fontWeight: '500',
+    fontSize: 36, // Slightly larger button text
+    fontWeight: '400', // Slightly adjusted font weight
+    // color is set dynamically inline
   },
 });
 
